@@ -1,0 +1,23 @@
+machine learning
+
+1.SVM
+2.LR
+3.RF 随机森林
+
+
+Graph Learning
+1.GCN
+2.GAT
+3.Graphsage
+
+GNN Fraud
+1.FdGars
+2.Player2vec
+3.GraphConsis
+4.GEM
+5.CARE-GNN
+AGRM  电信欺诈5
+6.BTG  电信欺诈4
+7.GAT-COBO
+
+8. LSG
