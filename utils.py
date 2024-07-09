@@ -1,15 +1,9 @@
 import numpy as np
 
-import math
-import csv
-
-import gzip
-import csv
-import os
-import io
 import pandas as pd
-import copy
-from scipy import stats
+from sklearn.metrics import precision_recall_fscore_support,confusion_matrix,roc_auc_score,accuracy_score
+from sklearn.preprocessing import MinMaxScaler
+
 
 
 def time_gap(vol_list):
@@ -272,3 +266,51 @@ def normalize(mx: np.ndarray):  # 均值方差归一化
         mx[:, k] = (mx[:, k]-np.mean(mx[:, k]))/np.std(mx[:, k])
     mx = mx.reshape(shape)
     return mx
+
+# 评估结果
+def evaluate_results(Y_val_true, Y_val_pred):
+    if Y_val_pred.ndim==1:
+        Y_val_pred_classes = Y_val_pred
+    else:
+        Y_val_pred_classes = np.argmax(Y_val_pred, axis=1)
+    confusion_test_mtx = confusion_matrix(Y_val_true, Y_val_pred_classes)
+    # plot the confusion matrix
+
+    # plot_confusion_matrix(confusion_test_mtx, classes=range(2))
+
+    precision, recall, f1, _ = precision_recall_fscore_support(Y_val_true, Y_val_pred_classes, average="macro")
+    accuracy = accuracy_score(Y_val_true, Y_val_pred_classes)
+    if Y_val_pred.ndim==1:
+        auc = roc_auc_score(Y_val_true, Y_val_pred, average='macro')
+    else:
+        auc = roc_auc_score(Y_val_true, Y_val_pred[:, 1], average='macro')
+    print("Accuracy:%.4f || AUC: %.4f || Precision: %.4f || Recall: %.4f || F1: %.4f" % (accuracy, auc, precision, recall, f1))
+
+# 将训练集数据、测试集数据进行归一化处理
+'''
+train_data: 训练集
+test_data: 测试集
+exclude: 一个可选的列表，指定哪些列在归一化时需要排除。默认情况下，该列表为 None
+'''
+def min_max_scale(train_data, test_data, exclude=None):
+    # 默认不归一化手机号码和标签
+    if exclude is None:
+        exclude = ["phone_no_m", "label"]
+
+    # 合并训练集、测试集数据。用于后面的特征归一化处理
+    train_data["is_train"], test_data["is_train"] = [1] * len(train_data), [0] * len(test_data)
+    # data = train_data.append(test_data).reset_index(drop=True)
+    data = pd.concat([train_data, test_data]).reset_index(drop=True)
+    # 筛选要归一化的特征列表
+    columns = list(data.columns)
+    for column_to_drop in exclude:
+        if column_to_drop in columns:
+            columns.pop(columns.index(column_to_drop))
+
+    # 对数据进行归一化处理
+    # 训练集和测试集一起归一化???
+    mm = MinMaxScaler()
+    data.loc[:, columns] = mm.fit_transform(data.loc[:, columns])
+
+    return (data[data["is_train"] == 1].drop(columns=["is_train"]).copy(),
+            data[data["is_train"] == 0].drop(columns=["is_train"]).copy())
