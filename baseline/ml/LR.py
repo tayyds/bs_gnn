@@ -7,7 +7,7 @@ import numpy as np
 #
 if __name__ == '__main__':
     # 获取训练集、测试集数据
-    data = pd.read_csv('/Users/tongan/tongan/project/bs/fraud_detection_gnn/data_processing/feat_merge_output/all_feat_new.csv')
+    data = pd.read_csv('/data_processing/feat_merge_output/all_feat_new.csv')
     data.dropna(axis=0, how='any', inplace=True)
     for test_size in [(0.2, 0.25), (0.4, 0.5), (0.6, 0.5), (0.8, 0.5)]:
         # (A,B),A为测试集比例，B为验证集和训练集划分比例
