@@ -21,3 +21,23 @@ AGRM  电信欺诈5
 7.GAT-COBO
 
 8. LSG
+
+ml算法在本地训练
+
+gcn gat使用google colab进行训练
+graphsage使用autodl算力平台3090卡进行训练(tensorflow)
+
+caregnn使用google colab进行训练
+gem使用autodl训练
+graphconsis使用autodl训练
+player2vec使用autodl训练
+
+
+
+
+
+
+
+
+
+FRAUDRE
